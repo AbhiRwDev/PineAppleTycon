@@ -77,6 +77,57 @@ public class SFPSC_PlayerMovement : MonoBehaviour
     private Vector3 inputForce;
     private int i = 0;
     private float prevY;
+
+
+    public delegate void OnFocusChanged(Interactable newFocus);
+    public OnFocusChanged onFocusChangedCallback;
+
+    public Interactable focus;	// Our current focus: Item, Enemy etc.
+    public LayerMask interactionMask;   // Everything we can interact with
+
+   
+    public Camera cam;				// Reference to our camera
+
+    private void Update()
+    {
+        // If we press right mouse
+        if (Input.GetMouseButtonDown(1))
+        {
+            // Shoot out a ray
+            Ray ray = cam.ScreenPointToRay(Input.mousePosition);
+            RaycastHit hit;
+
+            // If we hit
+            if (Physics.Raycast(ray, out hit, 100f, interactionMask))
+            {
+                SetFocus(hit.collider.GetComponent<Interactable>());
+            }
+        }
+    }
+    // Set our focus to a new focus
+    void SetFocus(Interactable newFocus)
+    {
+        if (onFocusChangedCallback != null)
+            onFocusChangedCallback.Invoke(newFocus);
+
+        // If our focus has changed
+        if (focus != newFocus && focus != null)
+        {
+            // Let our previous focus know that it's no longer being focused
+            focus.OnDefocused();
+        }
+
+        // Set our focus to what we hit
+        // If it's not an interactable, simply set it to null
+        focus = newFocus;
+
+        if (focus != null)
+        {
+            // Let our focus know that it's being focused
+            focus.OnFocused(transform);
+        }
+
+    }
     private void FixedUpdate()
     {
         if ((wallRun != null && wallRun.IsWallRunning) || (grapplingHook != null && grapplingHook.IsGrappling))

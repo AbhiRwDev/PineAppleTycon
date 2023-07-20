@@ -46,8 +46,8 @@ public class SFPSC_FPSCamera : MonoBehaviour
         cam = this;
         cam_ = this.GetComponent<Camera>();
 
-        Cursor.lockState = CursorLockMode.Locked;
-        Cursor.visible = false;
+        /*Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;*/
     }
     
     private float rotX = 0.0f, rotY = 0.0f;
